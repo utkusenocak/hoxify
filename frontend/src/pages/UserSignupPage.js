@@ -8,11 +8,15 @@ class UserSignupPage extends React.Component {
     password: null,
     passwordRepeat: null,
     pendingApiCall: false,
+    errors: {},
   };
   onChange = (event) => {
     const { name, value } = event.target;
+    const errors = { ...this.state.errors };
+    errors[name] = undefined;
     this.setState({
       [name]: value,
+      errors,
     });
   };
 
@@ -27,20 +31,17 @@ class UserSignupPage extends React.Component {
     this.setState({ pendingApiCall: true });
     try {
       const response = await signup(body);
-    } catch (error) {}
+    } catch (error) {
+      if (error.response.data.validationErrors) {
+        this.setState({ errors: error.response.data.validationErrors });
+      }
+    }
     this.setState({ pendingApiCall: false });
-
-    /* signup(body)
-      .then((response) => {
-        
-      })
-      .catch((error) => {
-        this.setState({ pendingApiCall: false });
-      });*/
   };
 
   render() {
-    const { pendingApiCall } = this.state;
+    const { pendingApiCall, errors } = this.state;
+    const { username } = errors;
     return (
       <div className="container">
         <form>
@@ -49,9 +50,10 @@ class UserSignupPage extends React.Component {
             <label>Username</label>
             <input
               name="username"
-              className="form-control"
+              className={username ? "form-control is-invalid" : "form-control"}
               onChange={this.onChange}
             />
+            <div className="invalid-feedback">{username}</div>
           </div>
           <div className="mb-3">
             <label>Display Name</label>
