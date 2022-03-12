@@ -41,7 +41,7 @@ class UserSignupPage extends React.Component {
 
   render() {
     const { pendingApiCall, errors } = this.state;
-    const { username } = errors;
+    const { username, displayName } = errors;
     return (
       <div className="container">
         <form>
@@ -59,9 +59,12 @@ class UserSignupPage extends React.Component {
             <label>Display Name</label>
             <input
               name="displayName"
-              className="form-control"
+              className={
+                displayName ? "form-control is-invalid" : "form-control"
+              }
               onChange={this.onChange}
             />
+            <div className="invalid-feedback">{displayName}</div>
           </div>
           <div className="mb-3">
             <label>Password</label>
