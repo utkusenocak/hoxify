@@ -18,7 +18,7 @@ public class User {
     @GeneratedValue
     private long id;
 
-    @NotNull
+    @NotNull(message = "{hoxify.constraints.username.NotNull.message}")
     @Size(min = 4, max = 255)
     @UniqueUsername
     private String username;
@@ -29,6 +29,6 @@ public class User {
 
     @NotNull
     @Size(min = 8, max = 255)
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d).*$", message = "{hoxify.constraints.password.Pattern.message}")
     private String password;
 }
