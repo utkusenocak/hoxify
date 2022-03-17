@@ -13,6 +13,7 @@ const resources = {
       "Display Name": "Display Name",
       Password: "Password",
       "Password Repeat": "Password Repeat",
+      Login: "Login",
     },
   },
   tr: {
@@ -23,6 +24,7 @@ const resources = {
       "Display Name": "Tercih Edilen İsim",
       Password: "Şifre",
       "Password Repeat": "Şifre Tekrarı",
+      Login: "Giriş Yap",
     },
   },
 };
