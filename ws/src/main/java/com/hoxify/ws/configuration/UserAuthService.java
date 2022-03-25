@@ -19,6 +19,6 @@ public class UserAuthService implements UserDetailsService {
         User inDb = userRepository.findByUsername(username);
         if (inDb == null)
             throw new UsernameNotFoundException("User not found");
-        return new HoxifyUserDetails(inDb);
+        return inDb;
     }
 }
