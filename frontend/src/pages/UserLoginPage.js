@@ -2,13 +2,40 @@ import React from "react";
 import Input from "../components/Input";
 import { withTranslation } from "react-i18next";
 import { login } from "../api/apiCalls";
+import axios from "axios";
+import ButtonWithProgress from "../components/ButtonWithProgress";
 
 class UserLoginPage extends React.Component {
   state = {
     username: null,
     password: null,
     error: null,
+    pendingApiCall: false,
   };
+
+  componentDidMount() {
+    axios.interceptors.request.use((request) => {
+      this.setState({
+        pendingApiCall: true,
+      });
+      return request;
+    });
+
+    axios.interceptors.response.use(
+      (response) => {
+        this.setState({
+          pendingApiCall: false,
+        });
+        return response;
+      },
+      (error) => {
+        this.setState({
+          pendingApiCall: false,
+        });
+        throw error;
+      }
+    );
+  }
 
   onChange = (event) => {
     const { name, value } = event.target;
@@ -39,7 +66,7 @@ class UserLoginPage extends React.Component {
 
   render() {
     const { t } = this.props;
-    const { username, password, error } = this.state;
+    const { username, password, error, pendingApiCall } = this.state;
 
     const buttonEnabled = username && password;
 
@@ -58,17 +85,14 @@ class UserLoginPage extends React.Component {
             type="password"
             onChange={this.onChange}
           />
-          {error && (
-            <div className="alert alert-danger">{error}</div>
-          )}
+          {error && <div className="alert alert-danger">{error}</div>}
           <div className="text-center">
-            <button
-              className="btn btn-primary"
+            <ButtonWithProgress
               onClick={this.onClickLogin}
-              disabled={!buttonEnabled}
-            >
-              {t("Login")}
-            </button>
+              pendingApiCall={pendingApiCall}
+              disabled={!buttonEnabled || pendingApiCall}
+              text={t("Login")}
+            />
           </div>
         </form>
       </div>
