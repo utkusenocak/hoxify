@@ -2,21 +2,13 @@ import React from "react";
 import ReactDOM from "react-dom";
 import "./index.css";
 import "./bootstrap-override.scss";
-import App from "./App";
-import UserSignupPage from "./pages/UserSignupPage";
-import UserLoginPage from "./pages/UserLoginPage";
-import ApiProgress from "./shared/ApiProgress";
-import LanguageSelector from "./components/LanguageSelector";
+import App from "./container/App";
 import reportWebVitals from "./reportWebVitals";
 import "./i18n";
 
 ReactDOM.render(
   <React.StrictMode>
-    <ApiProgress>
-      <UserLoginPage />
-    </ApiProgress>
-
-    <LanguageSelector />
+    <App></App>
   </React.StrictMode>,
   document.getElementById("root")
 );
