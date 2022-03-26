@@ -3,6 +3,7 @@ import Input from "../components/Input";
 import { withTranslation } from "react-i18next";
 import { login } from "../api/apiCalls";
 import ButtonWithProgress from "../components/ButtonWithProgress";
+import { withApiProgress } from "../shared/ApiProgress";
 
 class UserLoginPage extends React.Component {
   state = {
@@ -73,6 +74,6 @@ class UserLoginPage extends React.Component {
     );
   }
 }
-
-const UserLoginPageWithTranslation = withTranslation()(UserLoginPage);
+const UserLoginPageWithApiProgress = withApiProgress(UserLoginPage, "/api/1.0/auth")
+const UserLoginPageWithTranslation = withTranslation()(UserLoginPageWithApiProgress);
 export default UserLoginPageWithTranslation;
