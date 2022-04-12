@@ -27,11 +27,15 @@ class UserLoginPage extends React.Component {
       username,
       password,
     };
+
+    const { push } = this.props.history;
+
     this.setState({
       error: null,
     });
     try {
       await login(creds);
+      push("/");
     } catch (apiError) {
       this.setState({
         error: apiError.response.data.message,
@@ -74,6 +78,11 @@ class UserLoginPage extends React.Component {
     );
   }
 }
-const UserLoginPageWithApiProgress = withApiProgress(UserLoginPage, "/api/1.0/auth")
-const UserLoginPageWithTranslation = withTranslation()(UserLoginPageWithApiProgress);
+const UserLoginPageWithApiProgress = withApiProgress(
+  UserLoginPage,
+  "/api/1.0/auth"
+);
+const UserLoginPageWithTranslation = withTranslation()(
+  UserLoginPageWithApiProgress
+);
 export default UserLoginPageWithTranslation;
