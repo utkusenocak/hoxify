@@ -13,12 +13,13 @@ export function withApiProgress(WrappedComponent, apiPath) {
     };
 
     componentDidMount() {
-      axios.interceptors.request.use((request) => {
+      this.requestIntercepter = axios.interceptors.request.use((request) => {
+        console.log("running request intercepter", apiPath);
         this.updateApiCallFor(request.url, true);
         return request;
       });
 
-      axios.interceptors.response.use(
+      this.responseIntercepter = axios.interceptors.response.use(
         (response) => {
           this.updateApiCallFor(response.config.url, false);
           return response;
@@ -28,6 +29,11 @@ export function withApiProgress(WrappedComponent, apiPath) {
           throw error;
         }
       );
+    }
+
+    componentWillUnmount() {
+      axios.interceptors.request.eject(this.requestIntercepter);
+      axios.interceptors.response.eject(this.responseIntercepter);
     }
 
     updateApiCallFor = (url, apiProgress) => {
