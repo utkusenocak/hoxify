@@ -14,6 +14,7 @@ const resources = {
       Password: "Password",
       "Password Repeat": "Password Repeat",
       Login: "Login",
+      Logout: "Logout",
     },
   },
   tr: {
@@ -25,6 +26,7 @@ const resources = {
       Password: "Şifre",
       "Password Repeat": "Şifre Tekrarı",
       Login: "Giriş Yap",
+      Logout: "Çıkış Yap",
     },
   },
 };
