@@ -4,8 +4,10 @@ import { withTranslation } from "react-i18next";
 import { login } from "../api/apiCalls";
 import ButtonWithProgress from "../components/ButtonWithProgress";
 import { withApiProgress } from "../shared/ApiProgress";
+import { Authentication } from "../shared/AuthenticationContext";
 
 class UserLoginPage extends React.Component {
+  static contextType = Authentication;
   state = {
     username: null,
     password: null,
@@ -23,7 +25,7 @@ class UserLoginPage extends React.Component {
   onClickLogin = async (event) => {
     event.preventDefault();
     const { username, password } = this.state;
-    const { onLoginSuccess } = this.props;
+    const { onLoginSuccess } = this.context;
     const creds = {
       username,
       password,
@@ -35,9 +37,13 @@ class UserLoginPage extends React.Component {
       error: null,
     });
     try {
-      await login(creds);
+      const response = await login(creds);
       push("/");
-      onLoginSuccess(username);
+      const authState = {
+        ...response.data,
+        password,
+      };
+      onLoginSuccess(authState);
     } catch (apiError) {
       this.setState({
         error: apiError.response.data.message,

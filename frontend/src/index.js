@@ -4,11 +4,14 @@ import "./index.css";
 import "./bootstrap-override.scss";
 import App from "./container/App";
 import reportWebVitals from "./reportWebVitals";
+import AuthenticationContext from "./shared/AuthenticationContext";
 import "./i18n";
 
 ReactDOM.render(
   <React.StrictMode>
-    <App></App>
+    <AuthenticationContext>
+      <App />
+    </AuthenticationContext>
   </React.StrictMode>,
   document.getElementById("root")
 );
