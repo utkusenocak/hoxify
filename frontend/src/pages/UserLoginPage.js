@@ -4,10 +4,10 @@ import { withTranslation } from "react-i18next";
 import { login } from "../api/apiCalls";
 import ButtonWithProgress from "../components/ButtonWithProgress";
 import { withApiProgress } from "../shared/ApiProgress";
-import { Authentication } from "../shared/AuthenticationContext";
+// import { Authentication } from "../shared/AuthenticationContext";
 
 class UserLoginPage extends React.Component {
-  static contextType = Authentication;
+  // static contextType = Authentication;
   state = {
     username: null,
     password: null,
@@ -25,7 +25,7 @@ class UserLoginPage extends React.Component {
   onClickLogin = async (event) => {
     event.preventDefault();
     const { username, password } = this.state;
-    const { onLoginSuccess } = this.context;
+    const onLoginSuccess = () => {};
     const creds = {
       username,
       password,
