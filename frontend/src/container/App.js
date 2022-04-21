@@ -11,28 +11,26 @@ import {
   Switch,
 } from "react-router-dom";
 import TopBar from "../components/TopBar";
-// import { Authentication } from "../shared/AuthenticationContext";
+import { useSelector } from "react-redux";
 
-class App extends React.Component {
+function App() {
   // static contextType = Authentication;
-  render() {
-    const isLoggedIn = false;
-    return (
-      <div>
-        <Router>
-          <TopBar />
-          <Switch>
-            <Route exact path="/" component={HomePage} />
-            {!isLoggedIn && <Route path="/login" component={UserLoginPage} />}
-            <Route path="/signup" component={UserSignupPage} />
-            <Route path="/user/:username" component={UserPage} />
-            <Redirect to="/" />
-          </Switch>
-        </Router>
-        <LanguageSelector />
-      </div>
-    );
-  }
+  const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
+  return (
+    <div>
+      <Router>
+        <TopBar />
+        <Switch>
+          <Route exact path="/" component={HomePage} />
+          {!isLoggedIn && <Route path="/login" component={UserLoginPage} />}
+          <Route path="/signup" component={UserSignupPage} />
+          <Route path="/user/:username" component={UserPage} />
+          <Redirect to="/" />
+        </Switch>
+      </Router>
+      <LanguageSelector />
+    </div>
+  );
 }
 
 export default App;
