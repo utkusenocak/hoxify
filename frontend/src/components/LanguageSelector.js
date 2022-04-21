@@ -12,7 +12,7 @@ const LanguageSelector = (props) => {
     <div className="container">
       <img
         src="https://flagcdn.com/h24/tr.png"
-        srcset="https://flagcdn.com/h48/tr.png 2x"
+        srcSet="https://flagcdn.com/h48/tr.png 2x"
         height="24"
         alt="Turkey"
         onClick={() => onChangeLanguage("tr")}
@@ -20,7 +20,7 @@ const LanguageSelector = (props) => {
       />
       <img
         src="https://flagcdn.com/h24/us.png"
-        srcset="https://flagcdn.com/h48/us.png 2x"
+        srcSet="https://flagcdn.com/h48/us.png 2x"
         height="24"
         alt="United States"
         onClick={() => onChangeLanguage("en")}
