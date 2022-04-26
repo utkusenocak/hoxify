@@ -1,26 +1,36 @@
 import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "../redux/authSlice";
-const hoaxAuth = localStorage.getItem("hoax-auth");
-let stateInLocalStorage = {
-  isLoggedIn: false,
-  username: undefined,
-  displayName: undefined,
-  image: undefined,
-  password: undefined,
+import SecureLS from "secure-ls";
+
+const secureLs = new SecureLS();
+
+const getStateFromStorage = () => {
+  const hoaxAuth = secureLs.get("hoax-auth");
+
+  let stateInLocalStorage = {
+    isLoggedIn: false,
+    username: undefined,
+    displayName: undefined,
+    image: undefined,
+    password: undefined,
+  };
+  if (hoaxAuth) {
+    return hoaxAuth;
+  }
+  return stateInLocalStorage;
 };
-if (hoaxAuth) {
-  try {
-    stateInLocalStorage = JSON.parse(hoaxAuth);
-  } catch (error) {}
-}
+
+const updateStateInStorage = (newState) => {
+  secureLs.set("hoax-auth", newState);
+};
 
 const store = configureStore({
   reducer: {
     auth: authReducer,
   },
-  preloadedState: stateInLocalStorage,
+  preloadedState: getStateFromStorage(),
 });
 store.subscribe(() => {
-  localStorage.setItem("hoax-auth", JSON.stringify(store.getState()));
+  updateStateInStorage(store.getState());
 });
 export default store;
