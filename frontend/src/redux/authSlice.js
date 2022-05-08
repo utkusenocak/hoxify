@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { login } from "../api/apiCalls";
+import { login, signup } from "../api/apiCalls";
 
 export const authSlice = createSlice({
   name: "auth",
@@ -25,7 +25,7 @@ export const authSlice = createSlice({
       state.image = action.payload.image;
       state.password = action.payload.password;
     },
-  }
+  },
 });
 
 export const { logoutSuccess, loginSuccess } = authSlice.actions;
@@ -39,6 +39,14 @@ export const loginHandler = (credential) => {
       password: credential.password,
     };
     dispatch(loginSuccess(authState));
+    return response;
+  };
+};
+
+export const signUpHandler = (user) => {
+  return async function (dispatch) {
+    const response = await signup(user);
+    await dispatch(loginHandler(user));
     return response;
   };
 };
