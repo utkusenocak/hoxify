@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import Input from "../components/Input";
-import { withTranslation } from "react-i18next";
+import { useTranslation } from "react-i18next";
 import ButtonWithProgress from "../components/ButtonWithProgress";
 import { withApiProgress } from "../shared/ApiProgress";
-import { connect } from "react-redux";
+import { useDispatch } from "react-redux";
 import { loginHandler } from "../redux/authSlice";
 
 const UserLoginPage = (props) => {
+  const dispatch = useDispatch();
   const [username, setUsername] = useState();
   const [password, setPassword] = useState();
   const [error, setError] = useState();
@@ -22,7 +23,7 @@ const UserLoginPage = (props) => {
       username,
       password,
     };
-    const { history, dispatch } = props;
+    const { history } = props;    
     const { push } = history;
     setError(undefined);
     try {
@@ -33,7 +34,8 @@ const UserLoginPage = (props) => {
     }
   };
 
-  const { t, pendingApiCall } = props;
+  const { pendingApiCall } = props;
+  const { t } = useTranslation();
 
   const buttonEnabled = username && password;
 
@@ -69,8 +71,5 @@ const UserLoginPageWithApiProgress = withApiProgress(
   UserLoginPage,
   "/api/1.0/auth"
 );
-const UserLoginPageWithTranslation = withTranslation()(
-  UserLoginPageWithApiProgress
-);
 
-export default connect()(UserLoginPageWithTranslation);
+export default UserLoginPageWithApiProgress;
