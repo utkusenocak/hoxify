@@ -14,7 +14,6 @@ import TopBar from "../components/TopBar";
 import { useSelector } from "react-redux";
 
 function App() {
-  // static contextType = Authentication;
   const isLoggedIn = useSelector(state => state.auth.isLoggedIn);
   return (
     <div>

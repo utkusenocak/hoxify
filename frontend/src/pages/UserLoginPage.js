@@ -30,9 +30,6 @@ const UserLoginPage = (props) => {
       push("/");
     } catch (apiError) {
       setError(apiError.response.data.message);
-      // this.setState({
-      //   error: apiError.response.data.message,
-      // });
     }
   };
 
