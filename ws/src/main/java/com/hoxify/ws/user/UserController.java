@@ -2,6 +2,7 @@ package com.hoxify.ws.user;
 
 import com.hoxify.ws.shared.CurrentUser;
 import com.hoxify.ws.shared.GenericResponse;
+import com.hoxify.ws.user.vm.UserUpdateVM;
 import com.hoxify.ws.user.vm.UserVM;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,6 +34,12 @@ public class UserController {
     @GetMapping("/users/{username}")
     UserVM getUser(@PathVariable String username) {
         User user = userService.getByUsername(username);
+        return new UserVM(user);
+    }
+
+    @PutMapping("/users/{username}")
+    UserVM updateUser(@RequestBody UserUpdateVM userUpdateVM, @PathVariable String username) {
+        User user = userService.updateUser(username, userUpdateVM);
         return new UserVM(user);
     }
 }
