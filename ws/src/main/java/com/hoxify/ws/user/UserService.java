@@ -1,5 +1,6 @@
 package com.hoxify.ws.user;
 
+import com.hoxify.ws.error.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,5 +32,13 @@ public class UserService {
             return userRepository.findByUsernameNot(user.getUsername(), pageable);
         }
         return userRepository.findAll(pageable);
+    }
+
+    public User getByUsername(String username) {
+       User inDb =  userRepository.findByUsername(username);
+       if (inDb == null) {
+           throw new NotFoundException();
+       }
+       return inDb;
     }
 }
