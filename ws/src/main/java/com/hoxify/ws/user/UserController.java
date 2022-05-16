@@ -1,8 +1,7 @@
 package com.hoxify.ws.user;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.hoxify.ws.shared.GenericResponse;
-import com.hoxify.ws.shared.Views;
+import com.hoxify.ws.user.vm.UserVM;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 public class UserController {
@@ -26,7 +24,7 @@ public class UserController {
     }
 
     @GetMapping("/api/1.0/users")
-    Page<UserProjection> getUsers(Pageable pageable) {
-        return userService.getUsers(pageable);
+    Page<UserVM> getUsers(Pageable pageable) {
+        return userService.getUsers(pageable).map(UserVM::new);
     }
 }
