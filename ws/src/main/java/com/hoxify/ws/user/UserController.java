@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.hoxify.ws.shared.GenericResponse;
 import com.hoxify.ws.shared.Views;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +26,8 @@ public class UserController {
     }
 
     @GetMapping("/api/1.0/users")
-    @JsonView(Views.Base.class)
-    List<User> getUsers() {
-        return userService.getUsers();
+    //@JsonView(Views.Base.class)
+    Page<User> getUsers(Pageable pageable) {
+        return userService.getUsers(pageable);
     }
 }
