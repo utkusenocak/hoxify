@@ -1,6 +1,7 @@
 package com.hoxify.ws.user;
 
 import com.hoxify.ws.error.NotFoundException;
+import com.hoxify.ws.file.FileService;
 import com.hoxify.ws.user.vm.UserUpdateVM;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -8,6 +9,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -15,12 +19,13 @@ public class UserService {
 
 
     UserRepository userRepository;
-
     PasswordEncoder passwordEncoder;
+    FileService fileService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FileService fileService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.fileService = fileService;
     }
 
     public void save(User user) {
@@ -47,7 +52,13 @@ public class UserService {
         User inDb = getByUsername(username);
         inDb.setDisplayName(userUpdateVM.getDisplayName());
         if (userUpdateVM.getImage() != null) {
-            inDb.setImage(userUpdateVM.getImage());
+            //inDb.setImage(userUpdateVM.getImage());
+            try {
+                String storedFileName = fileService.writeBase64EncodedStringToFile(userUpdateVM.getImage());
+                inDb.setImage(storedFileName);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
         }
         return userRepository.save(inDb);
     }
