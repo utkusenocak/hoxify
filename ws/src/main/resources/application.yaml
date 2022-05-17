@@ -10,3 +10,19 @@ spring:
       pageable:
         default-page-size: 10
         max-page-size: 100
+hoxify:
+  upload-path: pictures
+---
+spring:
+  config:
+    activate:
+      on-profile: production
+hoxify:
+  upload-path: storage-production
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+hoxify:
+  upload-path: storage-dev
