@@ -5,6 +5,8 @@ import com.hoxify.ws.shared.GenericResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -24,7 +26,7 @@ public class HoaxController {
     }
 
     @GetMapping("/hoaxes")
-    public Page<HoaxVM> getHoaxes(Pageable pageable){
+    public Page<HoaxVM> getHoaxes(@PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return hoaxService.getHoaxes(pageable).map(HoaxVM::new);
     }
 
