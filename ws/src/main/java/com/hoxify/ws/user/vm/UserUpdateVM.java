@@ -1,6 +1,6 @@
 package com.hoxify.ws.user.vm;
 
-import com.hoxify.ws.shared.ProfileImage;
+import com.hoxify.ws.shared.FileType;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -11,6 +11,6 @@ public class UserUpdateVM {
     @NotNull
     @Size(min = 4, max = 255)
     private String displayName;
-    @ProfileImage
+    @FileType(types = {"jpeg", "png"})
     private String image;
 }

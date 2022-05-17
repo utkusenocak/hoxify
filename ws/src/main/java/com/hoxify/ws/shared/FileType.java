@@ -9,11 +9,13 @@ import java.lang.annotation.Target;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = {ProfileImageValidator.class})
-public @interface ProfileImage {
-    String message() default "{hoxify.constraints.ProfileImage.message}";
+@Constraint(validatedBy = {FileTypeValidator.class})
+public @interface FileType {
+    String message() default "{hoxify.constraints.FileType.message}";
 
     Class<?>[] groups() default {};
 
     Class<? extends Payload>[] payload() default {};
+
+    String[] types();
 }
