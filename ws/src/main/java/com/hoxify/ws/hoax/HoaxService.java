@@ -1,6 +1,5 @@
 package com.hoxify.ws.hoax;
 
-import com.hoxify.ws.hoax.vm.HoaxVM;
 import com.hoxify.ws.user.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +18,7 @@ public class HoaxService {
 
     public void save(Hoax hoax, User user) {
         hoax.setTimestamp(new Date());
+        hoax.setUser(user);
         hoaxRepository.save(hoax);
     }
 
