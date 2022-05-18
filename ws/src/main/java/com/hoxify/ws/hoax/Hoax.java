@@ -12,7 +12,7 @@ import java.util.Date;
 @Entity
 public class Hoax {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Size(min = 1, max = 1000)
@@ -23,5 +23,6 @@ public class Hoax {
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
 
+    @ManyToOne
     private User user;
 }
