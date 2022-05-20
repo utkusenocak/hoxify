@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface HoaxRepository extends JpaRepository<Hoax, Long> {
     Page<Hoax> findByUser(User user, Pageable pageable);
     Page<Hoax> findByIdLessThan(Long id, Pageable pageable);
+
+    Page<Hoax> findByIdLessThanAndUser(Long id, User user, Pageable pageable);
 }

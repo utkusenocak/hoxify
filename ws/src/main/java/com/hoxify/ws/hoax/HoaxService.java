@@ -38,4 +38,9 @@ public class HoaxService {
     public Page<Hoax> getOldHoaxes(Long id, Pageable pageable) {
         return hoaxRepository.findByIdLessThan(id, pageable);
     }
+
+    public Page<Hoax> getOldUserHoaxes(Long id, String username, Pageable pageable) {
+        User user = userService.getByUsername(username);
+        return hoaxRepository.findByIdLessThanAndUser(id, user, pageable);
+    }
 }
