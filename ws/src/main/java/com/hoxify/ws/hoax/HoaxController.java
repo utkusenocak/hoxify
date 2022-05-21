@@ -70,12 +70,19 @@ public class HoaxController {
                                                    @PageableDefault(sort = "id",
                                                            direction = Sort.Direction.DESC) Pageable pageable,
                                                    @RequestParam(name = "count",
-                                                           required = false, defaultValue = "false") boolean count) {
+                                                           required = false, defaultValue = "false") boolean count,
+                                                   @RequestParam(name = "direction",
+                                                           defaultValue = "before") String direction) {
         if (count) {
             Long newUserHoaxCount = hoaxService.getNewUserHoaxCount(id, username);
             Map<String, Long> response = new HashMap<>();
             response.put("count", newUserHoaxCount);
             return ResponseEntity.ok(response);
+        }
+        if (direction.equals("after")) {
+            List<HoaxVM> newUserHoaxes = hoaxService.getNewUserHoaxes(username, id, pageable.getSort())
+                    .stream().map(HoaxVM::new).collect(Collectors.toList());
+            return ResponseEntity.ok(newUserHoaxes);
         }
         return ResponseEntity.ok(hoaxService.getOldUserHoaxes(id, username, pageable).map(HoaxVM::new));
     }
