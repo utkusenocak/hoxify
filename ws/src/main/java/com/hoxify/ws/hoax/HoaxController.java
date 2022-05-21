@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/1.0")
@@ -37,15 +39,22 @@ public class HoaxController {
 
     @GetMapping("/hoaxes/{id:\\d+}")
     public ResponseEntity<?> getHoaxesRelative(@PathVariable Long id,
-                                            @PageableDefault(sort = "id",
-                                                  direction = Sort.Direction.DESC) Pageable pageable,
-                                            @RequestParam(name = "count",
-                                                  required = false, defaultValue = "false") boolean count) {
+                                               @PageableDefault(sort = "id",
+                                                       direction = Sort.Direction.DESC) Pageable pageable,
+                                               @RequestParam(name = "count",
+                                                       required = false, defaultValue = "false") boolean count,
+                                               @RequestParam(name = "direction",
+                                                       defaultValue = "before") String direction) {
         if (count) {
             Long newHoaxCount = hoaxService.getNewHoaxesCount(id);
             Map<String, Long> response = new HashMap<>();
             response.put("count", newHoaxCount);
             return ResponseEntity.ok(response);
+        }
+        if (direction.equals("after")) {
+            List<HoaxVM> newHoaxes = hoaxService.getNewHoaxes(id, pageable.getSort())
+                    .stream().map(HoaxVM::new).collect(Collectors.toList());
+            return ResponseEntity.ok(newHoaxes);
         }
         return ResponseEntity.ok(hoaxService.getOldHoaxes(id, pageable).map(HoaxVM::new));
     }
@@ -57,11 +66,11 @@ public class HoaxController {
 
     @GetMapping("/users/{username}/hoaxes/{id:\\d+}")
     public ResponseEntity<?> getUserHoaxesRelative(@PathVariable Long id,
-                                              @PathVariable String username,
-                                              @PageableDefault(sort = "id",
-                                                      direction = Sort.Direction.DESC) Pageable pageable,
-                                              @RequestParam(name = "count",
-                                                      required = false, defaultValue = "false") boolean count) {
+                                                   @PathVariable String username,
+                                                   @PageableDefault(sort = "id",
+                                                           direction = Sort.Direction.DESC) Pageable pageable,
+                                                   @RequestParam(name = "count",
+                                                           required = false, defaultValue = "false") boolean count) {
         if (count) {
             Long newUserHoaxCount = hoaxService.getNewUserHoaxCount(id, username);
             Map<String, Long> response = new HashMap<>();

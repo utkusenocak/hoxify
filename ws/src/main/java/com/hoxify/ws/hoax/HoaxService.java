@@ -4,9 +4,11 @@ import com.hoxify.ws.user.User;
 import com.hoxify.ws.user.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -51,5 +53,9 @@ public class HoaxService {
     public Long getNewUserHoaxCount(Long id, String username) {
         User user = userService.getByUsername(username);
         return hoaxRepository.countByUserAndIdGreaterThan(user, id);
+    }
+
+    public List<Hoax> getNewHoaxes(Long id, Sort sort) {
+        return hoaxRepository.findByIdGreaterThan(id, sort);
     }
 }
