@@ -10,6 +10,10 @@ spring:
       pageable:
         default-page-size: 10
         max-page-size: 100
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
 hoxify:
   upload-path: pictures
 ---
