@@ -1,5 +1,6 @@
 package com.hoxify.ws.hoax;
 
+import com.hoxify.ws.hoax.vm.HoaxSubmitVM;
 import com.hoxify.ws.hoax.vm.HoaxVM;
 import com.hoxify.ws.shared.CurrentUser;
 import com.hoxify.ws.shared.GenericResponse;
@@ -26,7 +27,7 @@ public class HoaxController {
     HoaxService hoaxService;
 
     @PostMapping("/hoaxes")
-    public GenericResponse saveHoax(@Valid @RequestBody Hoax hoax, @CurrentUser User user) {
+    public GenericResponse saveHoax(@Valid @RequestBody HoaxSubmitVM hoax, @CurrentUser User user) {
         hoaxService.save(hoax, user);
         return new GenericResponse("Hoax is saved");
 
