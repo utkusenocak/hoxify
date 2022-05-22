@@ -65,4 +65,10 @@ public class HoaxController {
     public Page<HoaxVM> getUserHoaxes(@PathVariable String username, @PageableDefault(sort = "id", direction = Sort.Direction.DESC) Pageable pageable) {
         return hoaxService.getUserHoaxes(pageable, username).map(HoaxVM::new);
     }
+
+    @DeleteMapping("/hoaxes/{id:\\d+}")
+    public GenericResponse deleteHoax(@PathVariable Long id) {
+        hoaxService.delete(id);
+        return new GenericResponse("Hoax removed");
+    }
 }

@@ -83,6 +83,10 @@ public class HoaxService {
         return hoaxRepository.findAll(specification, sort);
     }
 
+    public void delete(Long id) {
+        hoaxRepository.deleteById(id);
+    }
+
     Specification<Hoax> idLessThan(Long id) {
         return (root, query, criteriaBuilder) -> criteriaBuilder.lessThan(root.get("id"), id);
     }
