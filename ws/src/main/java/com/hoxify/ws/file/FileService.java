@@ -2,6 +2,8 @@ package com.hoxify.ws.file;
 
 import com.hoxify.ws.configuration.AppConfiguration;
 import org.apache.tika.Tika;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -12,9 +14,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 @Service
+@EnableScheduling
 public class FileService {
     AppConfiguration appConfiguration;
     Tika tika;
@@ -29,7 +33,7 @@ public class FileService {
 
     public String writeBase64EncodedStringToFile(String image) throws IOException {
         String filename = generateRandomName();
-        File target = new File(appConfiguration.getUploadPath() +"/"+filename);
+        File target = new File(appConfiguration.getUploadPath() + "/" + filename);
         OutputStream outputStream = Files.newOutputStream(target.toPath());
         byte[] base64encoded = Base64.getDecoder().decode(image);
 
@@ -39,7 +43,7 @@ public class FileService {
     }
 
     public String generateRandomName() {
-        return UUID.randomUUID().toString().replaceAll("-","");
+        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
     public void deleteFile(String oldImageName) {
@@ -60,7 +64,7 @@ public class FileService {
 
     public FileAttachment saveHoaxAttachment(MultipartFile multipartFile) {
         String filename = generateRandomName();
-        File target = new File(appConfiguration.getUploadPath() +"/"+filename);
+        File target = new File(appConfiguration.getUploadPath() + "/" + filename);
         try {
             OutputStream outputStream = Files.newOutputStream(target.toPath());
             outputStream.write(multipartFile.getBytes());
@@ -72,5 +76,16 @@ public class FileService {
         attachment.setName(filename);
         attachment.setDate(new Date());
         return fileAttachmentRepository.save(attachment);
+    }
+
+    @Scheduled(fixedRate = 24 * 60 * 60 * 1000)
+    public void cleanupStorage() {
+        Date twentyFourHoursAgo = new Date(System.currentTimeMillis() - (24 * 60 * 60 * 1000));
+        List<FileAttachment> filesToBeDeleted = fileAttachmentRepository
+                .findByDateBeforeAndHoaxIsNull(twentyFourHoursAgo);
+        for (FileAttachment file : filesToBeDeleted) {
+            deleteFile(file.getName());
+            fileAttachmentRepository.deleteById(file.getId());
+        }
     }
 }
