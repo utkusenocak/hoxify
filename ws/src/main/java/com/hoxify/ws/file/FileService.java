@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 import java.util.Date;
@@ -33,7 +34,7 @@ public class FileService {
 
     public String writeBase64EncodedStringToFile(String image) throws IOException {
         String filename = generateRandomName();
-        File target = new File(appConfiguration.getUploadPath() + "/" + filename);
+        File target = new File(appConfiguration.getProfileStoragepath() + "/" + filename);
         OutputStream outputStream = Files.newOutputStream(target.toPath());
         byte[] base64encoded = Base64.getDecoder().decode(image);
 
@@ -46,12 +47,23 @@ public class FileService {
         return UUID.randomUUID().toString().replaceAll("-", "");
     }
 
-    public void deleteFile(String oldImageName) {
+    public void deleteProfileImage(String oldImageName) {
         if (oldImageName == null) {
             return;
         }
+        deleteFile(Paths.get(appConfiguration.getProfileStoragepath(), oldImageName));
+    }
+
+    private void deleteAttachmentFile(String name) {
+        if (name == null) {
+            return;
+        }
+        deleteFile(Paths.get(appConfiguration.getAttachmentStoragePath(), name));
+    }
+
+    private void deleteFile(Path path) {
         try {
-            Files.deleteIfExists(Paths.get(appConfiguration.getUploadPath(), oldImageName));
+            Files.deleteIfExists(path);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -64,17 +76,20 @@ public class FileService {
 
     public FileAttachment saveHoaxAttachment(MultipartFile multipartFile) {
         String filename = generateRandomName();
-        File target = new File(appConfiguration.getUploadPath() + "/" + filename);
+        File target = new File(appConfiguration.getAttachmentStoragePath() + "/" + filename);
+        String fileType;
         try {
             OutputStream outputStream = Files.newOutputStream(target.toPath());
             outputStream.write(multipartFile.getBytes());
             outputStream.close();
+            fileType = tika.detect(multipartFile.getBytes());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
         FileAttachment attachment = new FileAttachment();
         attachment.setName(filename);
         attachment.setDate(new Date());
+        attachment.setFileType(fileType);
         return fileAttachmentRepository.save(attachment);
     }
 
@@ -84,7 +99,7 @@ public class FileService {
         List<FileAttachment> filesToBeDeleted = fileAttachmentRepository
                 .findByDateBeforeAndHoaxIsNull(twentyFourHoursAgo);
         for (FileAttachment file : filesToBeDeleted) {
-            deleteFile(file.getName());
+            deleteAttachmentFile(file.getName());
             fileAttachmentRepository.deleteById(file.getId());
         }
     }

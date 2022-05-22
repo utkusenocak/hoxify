@@ -4,15 +4,11 @@ import com.hoxify.ws.error.NotFoundException;
 import com.hoxify.ws.file.FileService;
 import com.hoxify.ws.user.vm.UserUpdateVM;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.util.Base64;
-import java.util.List;
 
 @Service
 public class UserService {
@@ -59,7 +55,7 @@ public class UserService {
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-            fileService.deleteFile(oldImageName);
+            fileService.deleteProfileImage(oldImageName);
         }
         return userRepository.save(inDb);
     }
