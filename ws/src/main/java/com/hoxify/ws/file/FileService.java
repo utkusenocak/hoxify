@@ -11,6 +11,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Base64;
+import java.util.Date;
 import java.util.UUID;
 
 @Service
@@ -18,9 +19,12 @@ public class FileService {
     AppConfiguration appConfiguration;
     Tika tika;
 
-    public FileService(AppConfiguration appConfiguration) {
+    FileAttachmentRepository fileAttachmentRepository;
+
+    public FileService(AppConfiguration appConfiguration, FileAttachmentRepository fileAttachmentRepository) {
         this.appConfiguration = appConfiguration;
         tika = new Tika();
+        this.fileAttachmentRepository = fileAttachmentRepository;
     }
 
     public String writeBase64EncodedStringToFile(String image) throws IOException {
@@ -54,7 +58,7 @@ public class FileService {
         return tika.detect(base64encoded);
     }
 
-    public String saveHoaxAttachment(MultipartFile multipartFile) {
+    public FileAttachment saveHoaxAttachment(MultipartFile multipartFile) {
         String filename = generateRandomName();
         File target = new File(appConfiguration.getUploadPath() +"/"+filename);
         try {
@@ -64,8 +68,9 @@ public class FileService {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
-
-        return filename;
+        FileAttachment attachment = new FileAttachment();
+        attachment.setName(filename);
+        attachment.setDate(new Date());
+        return fileAttachmentRepository.save(attachment);
     }
 }
