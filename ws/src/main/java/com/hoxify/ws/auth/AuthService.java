@@ -1,6 +1,7 @@
 package com.hoxify.ws.auth;
 
 import com.hoxify.ws.user.User;
+import com.hoxify.ws.user.UserRepository;
 import com.hoxify.ws.user.UserService;
 import com.hoxify.ws.user.vm.UserVM;
 import io.jsonwebtoken.Jwts;
@@ -11,26 +12,29 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
 
-    UserService userService;
+    UserRepository userRepository;
     PasswordEncoder passwordEncoder;
 
-    public AuthService(UserService userService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+        this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
     public AuthResponse authenticate(Credentials credentials) {
-        User user = userService.getByUsername(credentials.getUsername());
-        boolean matches = passwordEncoder.matches(credentials.getPassword(), user.getPassword());
-        if (matches) {
-            UserVM userVM = new UserVM(user);
-            String token = Jwts.builder().setSubject(String.valueOf(user.getId()))
-                    .signWith(SignatureAlgorithm.HS512, "my-app-secret").compact();
-            AuthResponse authResponse = new AuthResponse();
-            authResponse.setUser(userVM);
-            authResponse.setToken(token);
-            return authResponse;
+        User user = userRepository.findByUsername(credentials.getUsername());
+        if (user == null) {
+            throw new AuthException();
         }
-        return null;
+        boolean matches = passwordEncoder.matches(credentials.getPassword(), user.getPassword());
+        if (!matches) {
+            throw new AuthException();
+        }
+        UserVM userVM = new UserVM(user);
+        String token = Jwts.builder().setSubject(String.valueOf(user.getId()))
+                .signWith(SignatureAlgorithm.HS512, "my-app-secret").compact();
+        AuthResponse authResponse = new AuthResponse();
+        authResponse.setUser(userVM);
+        authResponse.setToken(token);
+        return authResponse;
     }
 }
