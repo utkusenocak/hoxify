@@ -20,16 +20,10 @@ public class UserService {
     PasswordEncoder passwordEncoder;
     FileService fileService;
 
-    HoaxService hoaxService;
-
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, FileService fileService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.fileService = fileService;
-    }
-    @Autowired
-    public void setHoaxService(HoaxService hoaxService) {
-        this.hoaxService = hoaxService;
     }
 
     public void save(User user) {
@@ -69,7 +63,8 @@ public class UserService {
     }
 
     public void deleteUser(String username) {
-        hoaxService.deleteHoaxesOfUser(username);
-        userRepository.deleteByUsername(username);
+        User user = userRepository.findByUsername(username);
+        fileService.deleteAllStoredFilesForUser(user);
+        userRepository.delete(user);
     }
 }
