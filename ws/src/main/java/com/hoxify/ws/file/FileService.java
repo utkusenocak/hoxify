@@ -54,7 +54,7 @@ public class FileService {
         deleteFile(Paths.get(appConfiguration.getProfileStoragepath(), oldImageName));
     }
 
-    private void deleteAttachmentFile(String name) {
+    public void deleteAttachmentFile(String name) {
         if (name == null) {
             return;
         }
