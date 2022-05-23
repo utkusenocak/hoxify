@@ -44,7 +44,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     private List<Hoax> hoaxes;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", orphanRemoval = true)
     private List<Token> tokens;
 
     @Override
