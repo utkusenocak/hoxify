@@ -13,6 +13,8 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+  main:
+    allow-circular-references: true
 
 hoxify:
   upload-path: pictures
