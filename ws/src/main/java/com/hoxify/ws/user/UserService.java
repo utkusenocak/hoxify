@@ -70,7 +70,6 @@ public class UserService {
 
     public void deleteUser(String username) {
         hoaxService.deleteHoaxesOfUser(username);
-        User user = userRepository.findByUsername(username);
-        userRepository.delete(user);
+        userRepository.deleteByUsername(username);
     }
 }
