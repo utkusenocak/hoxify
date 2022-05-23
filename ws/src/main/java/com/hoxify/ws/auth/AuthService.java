@@ -2,18 +2,14 @@ package com.hoxify.ws.auth;
 
 import com.hoxify.ws.user.User;
 import com.hoxify.ws.user.UserRepository;
-import com.hoxify.ws.user.UserService;
 import com.hoxify.ws.user.vm.UserVM;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import org.hibernate.proxy.HibernateProxy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuthService {
@@ -21,9 +17,13 @@ public class AuthService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    TokenRepository tokenRepository;
+
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+                       TokenRepository tokenRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.tokenRepository = tokenRepository;
     }
 
     public AuthResponse authenticate(Credentials credentials) {
@@ -36,25 +36,27 @@ public class AuthService {
             throw new AuthException();
         }
         UserVM userVM = new UserVM(user);
-        String token = Jwts.builder().setSubject(String.valueOf(user.getId()))
-                .signWith(SignatureAlgorithm.HS512, "my-app-secret").compact();
+        String token = generateRandomToken();
+        Token tokenEntity = new Token();
+        tokenEntity.setToken(token);
+        tokenEntity.setUser(user);
+        tokenRepository.save(tokenEntity);
         AuthResponse authResponse = new AuthResponse();
         authResponse.setUser(userVM);
         authResponse.setToken(token);
         return authResponse;
     }
+
     @Transactional
     public UserDetails getUserDetails(String token) {
-        JwtParser parser = Jwts.parser().setSigningKey("my-app-secret");
-        try {
-            parser.parse(token);
-            Claims claims = parser.parseClaimsJws(token).getBody();
-            Long userId = new Long(claims.getSubject());
-            User user = userRepository.getById(userId);
-            return (User) ((HibernateProxy)user).getHibernateLazyInitializer().getImplementation();
-        } catch (Exception e) {
-            e.printStackTrace();
+        Optional<Token> optionalToken = tokenRepository.findById(token);
+        if (!optionalToken.isPresent()) {
+            return null;
         }
-        return null;
+        return optionalToken.get().getUser();
+    }
+
+    public String generateRandomToken() {
+        return UUID.randomUUID().toString().replaceAll("-", "");
     }
 }
