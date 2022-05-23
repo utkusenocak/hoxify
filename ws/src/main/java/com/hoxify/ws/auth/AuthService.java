@@ -4,10 +4,16 @@ import com.hoxify.ws.user.User;
 import com.hoxify.ws.user.UserRepository;
 import com.hoxify.ws.user.UserService;
 import com.hoxify.ws.user.vm.UserVM;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.hibernate.proxy.HibernateProxy;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import javax.transaction.Transactional;
 
 @Service
 public class AuthService {
@@ -36,5 +42,19 @@ public class AuthService {
         authResponse.setUser(userVM);
         authResponse.setToken(token);
         return authResponse;
+    }
+    @Transactional
+    public UserDetails getUserDetails(String token) {
+        JwtParser parser = Jwts.parser().setSigningKey("my-app-secret");
+        try {
+            parser.parse(token);
+            Claims claims = parser.parseClaimsJws(token).getBody();
+            Long userId = new Long(claims.getSubject());
+            User user = userRepository.getById(userId);
+            return (User) ((HibernateProxy)user).getHibernateLazyInitializer().getImplementation();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
